@@ -2,7 +2,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
-
+import gzip
 
 def fetch_poster(movie_id):
     response = requests.get(
@@ -10,7 +10,6 @@ def fetch_poster(movie_id):
             movie_id))
     data = response.json()
     return "https://image.tmdb.org/t/p/original" + data['poster_path']
-
 
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
@@ -27,16 +26,18 @@ def recommend(movie):
         recommended_movies_posters.append(fetch_poster(movie_id))
     return recommended_movies, recommended_movies_posters
 
-
+# Load the movie dictionary
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
 
-similarity = pickle.load(open('similarity.pkl.gz', 'rb'))
+# Load the similarity matrix from the gzip-compressed file
+with gzip.open('similarity.pkl.gz', 'rb') as f:
+    similarity = pickle.load(f)
 
-st.title('Movie Recommender system')
+st.title('Movie Recommender System')
 
 selected_movie_name = st.selectbox(
-    'How would you like to be  contacted?',
+    'Select a movie to get recommendations:',
     movies['title'].values)
 
 if st.button("Recommend"):
@@ -62,3 +63,24 @@ if st.button("Recommend"):
     with col5:
         st.text(names[4])
         st.image(posters[4])
+
+    col6, col7, col8, col9, col10 = st.columns(5)
+    with col6:
+        st.text(names[5])
+        st.image(posters[5])
+
+    with col7:
+        st.text(names[6])
+        st.image(posters[6])
+
+    with col8:
+        st.text(names[7])
+        st.image(posters[7])
+
+    with col9:
+        st.text(names[8])
+        st.image(posters[8])
+
+    with col10:
+        st.text(names[9])
+        st.image(posters[9])
